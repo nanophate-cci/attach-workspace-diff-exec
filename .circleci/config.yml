@@ -39,8 +39,6 @@ jobs:
           else
             echo "Nope!"; exit 1
           fi
-      - run: echo "export OUTPUT='$(cat echo-output)'" >> "$BASH_ENV"
-      - run: echo $OUTPUT
       - run: ls -la monorepo/sdk/iphone/local
 
 workflows:
