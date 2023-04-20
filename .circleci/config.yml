@@ -10,15 +10,25 @@ jobs:
     macos:
       xcode: 14.2.0
     resource_class: macos.x86.medium.gen2
+    working_directory: ~/monorepo
     steps:
-      - run: echo "Hello, world!" > echo-output
+      - run: mkdir -p sdk/iphone/local/ 
+      - run: echo "Hello, world!" > sdk/iphone/local/echo-output
+      - run: |
+          dd if=/dev/urandom of=randomfile bs=10M count=1 
+          zip sdk/iphone/local/randomfile.zip randomfile
+          zip sdk/iphone/local/randomfile-1.zip randomfile
+          zip sdk/iphone/local/randomfile-aa.zip randomfile
+          zip sdk/iphone/local/randomfile-bb.zip randomfile
       - persist_to_workspace:
           root: .
           paths:
             - echo-output
+            - sdk/iphone/local/*.zip
 
   downstream:
     executor: my-executor
+    working_directory: ~/monorepo
     steps:
       - attach_workspace:
           at: ./
@@ -30,6 +40,7 @@ jobs:
           fi
       - run: echo "export OUTPUT='$(cat echo-output)'" >> "$BASH_ENV"
       - run: echo $OUTPUT
+      - run: ls -la
 
 workflows:
   btd:
